@@ -1,0 +1,6 @@
+backup
+bin
+resource/work
+screenshots
+#source/__pycache__
+__pycache__

@@ -1,0 +1,34 @@
+# sprites_file_name: str
+..\resource\sprites.bmp
+# sprites_separator_width: int (>= 0)
+1
+# sprites_transparent_color: Color (r/g/b - 0..255 each)
+255 0 255
+# cell_size: Size  # sprites (pixels) (> 0 each) 
+50 50
+# cursor_alpha: int (0..255)
+20
+# background_file_name: str
+..\resource\background.bmp
+# icon_file_name: str
+..\resource\icon.bmp
+# icon_transparent_color: Color (r/g/b - 0..255 each)
+255 0 255
+# show_cursor: bool (0 - yes or 1 - no)
+1
+# message_text_color: Color (r/g/b - 0..255 each)
+255 201 14
+# message_background_color: Color (r/g/b - 0..255 each)
+0 0 61
+# message_frame_color: Color (r/g/b - 0..255 each)
+255 201 14
+# message_alpha: int (0..255)
+220
+# message_font_size: int (> 5)
+25
+# message_frame_width: int (>= 0)
+1
+# message_vert_indent: int (>= 0)
+10
+# message_hor_indent: int (>= 0)
+10
