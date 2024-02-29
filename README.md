@@ -1,3 +1,3 @@
-# Project name
+# Turn on the Lights
 
-![Hint](filename.png)
+![Gameplay](screenshot.png)

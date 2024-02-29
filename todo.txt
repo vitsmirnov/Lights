@@ -1,5 +1,8 @@
-Bugs/problems:
- - ..
+Refactoring/bugs:
+ - Check default args for changeable types
+ - Add doc strings
+ - Make tests
+ - Split main class (Game)
 
 Features:
  - ..
