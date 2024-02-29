@@ -1,3 +1,3 @@
-# Turn on the Lights
+# Turn on the **Lights** :bulb:
 
 ![Gameplay](screenshot.png)
