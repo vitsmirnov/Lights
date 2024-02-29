@@ -49,7 +49,11 @@ class Class1:
 
 
 def main():
-    pass
+    def e(i, j) -> None:
+        print(f"{i}, {j}")
+    list1 = [[e(i, j) for i in range(3)] for j in range(4)]
+    print(list1)
+
 
 if __name__ == '__main__':
     main()

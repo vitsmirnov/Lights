@@ -1,13 +1,14 @@
 """
 (c) Vitaly Smirnov [VSdev]
 mrmaybelately@gmail.com
+https://github.com/vitsmirnov
 2024
 """
 
 from enum import Enum
 from random import randint, choice
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import singledispatchmethod
 
 
@@ -149,7 +150,7 @@ class Fork:
 
 @dataclass
 class Cell:
-    fork: Fork = Fork()  # Fork = field(default_factory=Fork)
+    fork: Fork = field(default_factory=Fork)
     is_plugged: bool = False
     
     def setup(self, fork: Fork, is_plugged: bool) -> None:
@@ -172,18 +173,21 @@ class Net:
 
     def __init__(self, width: int=DEFAULT_WIDTH, height: int=DEFAULT_HEIGHT,
                  cell: Cell=Cell()):
+        # Cell() as a default parameter is safe here, because it's copied (deep)
         self._cells = list()
         self.setup(width, height, cell)
 
     def setup(self, width: int, height: int, cell: Cell=Cell()) -> bool:
         """ It returns True if size was changed nad False otherwise """
+        # Cell() as a default parameter is safe here, because it's copied (deep)
         width, height = self._fitted_size((width, height))
         if self.width == width and self.height == height:
             return False
         self._setup(width, height, cell)
         return True
 
-    def reset(self, fork: Fork=Fork(), is_plugged: bool=False):
+    def reset(self, fork: Fork=Fork(), is_plugged: bool=False) -> None:
+        # Fork() as a default parameter is safe here, because it's copied (deep)
         self.for_each(lambda cell: cell.setup(deepcopy(fork), is_plugged))
 
 
@@ -277,12 +281,12 @@ class Net:
             so it returns Cell(x, y). Note, that it DOESN'T do range checks! """
         return self._cells[x][y]
 
-    def at(self, pos: Point) -> Cell:
+    def get_at(self, pos: Point) -> Cell:
         if self.does_pos_exist(pos):
             return self._cells[pos.x][pos.y]
         #raise IndexError()
 
-    def at(self, pos: Point, cell: Cell) -> None:
+    def set_at(self, pos: Point, cell: Cell) -> None:
         if self.does_pos_exist(pos):
             self._cells[pos.x][pos.y] = cell
 
@@ -308,8 +312,10 @@ class Net:
 
     def _setup(self, width: int, height: int, cell: Cell=Cell()) -> None:
         self._cells.clear()  # do we need this? Or this: del self._cells ?
-        self._cells = [[deepcopy(cell) for _ in range(height)]
-                       for _ in range(width)] # is it effective?
+        # Well, I guess clear() could help for garbage collector, but I'm not sure
+        self._cells = [[deepcopy(cell)
+                        for _ in range(height)]
+                        for _ in range(width)] # is it effective?
 
     def _traversal(self, start_pos: Point, go_through: bool,
         creation_mode: bool=False) -> int: # cells_to_skip: list[Point]
@@ -385,7 +391,9 @@ class Engine:
     SCORE_GO_THROUGH_COEFF = 4
     POINTS_PER_CELL = 10  # Amount of points per cell (if it isn't empty)
 
-    def __init__(self, settings: LevelData = LevelData()):
+    def __init__(self, settings: LevelData=LevelData()):
+        # We don't change settings, so it's safe to use LevelData()
+        # as a default parameter
         w, h = settings.field_size
         self._net = Net(w, h, Cell())
         self._go_through = settings.go_through

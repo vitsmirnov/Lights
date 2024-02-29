@@ -112,7 +112,7 @@ class Sprites:
 
 @dataclass
 class GameSettings:  # class for default game settings. (Rename?) (AppSettings?)
-    DEFAULT_RESOURCE_PATH = "..\\resource\\"  # temp
+    DEFAULT_RESOURCE_PATH = "resource\\"  # temp?  # ..\\
     
     sprites_file_name: str = DEFAULT_RESOURCE_PATH + "sprites.bmp"
     sprites_separator_width: int = 1
