@@ -1,7 +1,8 @@
 Refactoring/bugs:
  - Check default args for mutable types
  - Check and fix paths situation
- - Add doc strings
+ - Add doc strings (?)
+ - Do a refactoring for exceptions
  - Make tests
  - Split main class (Game)
 

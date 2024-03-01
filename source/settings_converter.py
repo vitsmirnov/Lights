@@ -1,3 +1,10 @@
+"""
+(c) Vitaly Smirnov [VSdev]
+mrmaybelately@gmail.com
+https://github.com/vitsmirnov
+2024
+"""
+
 def main() -> None:
     source_file = "settings.txt"
     out_file = "settings_instance.py"

@@ -1,6 +1,7 @@
 """
 (c) Vitaly Smirnov [VSdev]
 mrmaybelately@gmail.com
+https://github.com/vitsmirnov
 2024
 """
 
@@ -16,6 +17,9 @@ from lights_core import *  # It's ok, there are no conflicts
 from settings_instance import SETTINGS_INSTANCE
 
 
+DEBUG_MODE: bool = True
+
+
 # classes list
 class UserInput: ...
 class Sprites: ...
@@ -23,8 +27,8 @@ class GameSettings: ...
 class LightsGame: ...
 
 
-type Color = tuple[int, int, int]
-type Size = tuple[int, int]
+type Color = tuple[int, int, int]  # RGB
+type Size = tuple[int, int]  # width, height
 
 
 COLOR_FUCHSIA: Color = (255, 0, 255)
@@ -72,7 +76,7 @@ class Sprites:
 
     ERROR_MSG_CANT_LOAD = (
         "Error: can't load sprite images from: \"{}\". File not found.")
-    
+
     def __init__(self, file_name: str, cell_width: int, cell_height: int, 
         transparent_color: pg.Color=COLOR_FUCHSIA, separator_width: int=0): 
         # separator_width - distance between sprites (in pixels)
@@ -112,7 +116,7 @@ class Sprites:
 
 @dataclass
 class GameSettings:  # class for default game settings. (Rename?) (AppSettings?)
-    DEFAULT_RESOURCE_PATH = "resource\\"  # temp?  # ..\\
+    DEFAULT_RESOURCE_PATH = "resource\\"  # temp?
     
     sprites_file_name: str = DEFAULT_RESOURCE_PATH + "sprites.bmp"
     sprites_separator_width: int = 1
@@ -178,6 +182,7 @@ class GameSettings:  # class for default game settings. (Rename?) (AppSettings?)
 
 
 class LightsGame:
+    # This class should be split (part of data should migrate to controller?)
     SETTINGS_FILE_NAME = "settings.txt"
     SETTINGS_INSTANCE_FILE_NAME = "settings_instance.txt"
     DEFAULT_WINDOW_CAPTION = "Turn on the Lights"
@@ -305,12 +310,12 @@ class LightsGame:
 
     def inc_cursor_alpha(self) -> None:
         cur_alpha = self._sprites.cursor.get_alpha()
-        if cur_alpha != None and cur_alpha + self.CURSOR_ALPHA_STEP <= 255:  # it isn't magic number)
+        if cur_alpha is not None and cur_alpha + self.CURSOR_ALPHA_STEP <= 255:  # it isn't magic number)
             self._sprites.cursor.set_alpha(cur_alpha + self.CURSOR_ALPHA_STEP)
     
     def dec_cursor_alpha(self) -> None:
         cur_alpha = self._sprites.cursor.get_alpha()
-        if cur_alpha != None and cur_alpha - self.CURSOR_ALPHA_STEP >= 0:
+        if cur_alpha is not None and cur_alpha - self.CURSOR_ALPHA_STEP >= 0:
             self._sprites.cursor.set_alpha(cur_alpha - self.CURSOR_ALPHA_STEP)
 
     def get_settings_instance(self) -> bool:
@@ -380,12 +385,13 @@ class LightsGame:
         set_keydown_command(pg.K_0, self.inc_cell_size)
         set_keydown_command(pg.K_9, self.dec_cell_size)
         # For debugging (temp)
-        set_keydown_command(pg.K_END, self._finish_game)
-        set_keydown_command(pg.K_BACKSPACE, self._disassemble_lvl)
+        if DEBUG_MODE:
+            set_keydown_command(pg.K_END, self._finish_game)
+            set_keydown_command(pg.K_BACKSPACE, self._disassemble_lvl)
 
     def _init_settings(self) -> GameSettings:
         settings = GameSettings.load_from_file(self.SETTINGS_FILE_NAME)
-        if settings == None:
+        if settings is None:
             settings = GameSettings()
 
         # It's not good
@@ -448,27 +454,27 @@ class LightsGame:
             icon = pg.surface.Surface((side_len, side_len))
             x = side_len * plugged
             icon.blit(icon_img, (0, 0), (x, 0, x + side_len, side_len))
-            if transparent_color != None:
+            if transparent_color is not None:
                 icon.set_colorkey(transparent_color)
             self._icons.append(icon)
         self._current_icon_state = not self._engine.is_net_united
 
     def _init_messages(self, font_size: int=25, frame_width: int=3,
         frame_vert_indent: int=10, frame_hor_indent: int=10) -> None:
-        cond = get_is_key_down_in((pg.K_ESCAPE, pg.K_RETURN, pg.K_SPACE))
+        condition = get_is_key_down_in((pg.K_ESCAPE, pg.K_RETURN, pg.K_SPACE))
 
         # To do: it should be refactored!
-        self._quit_msg = StaticMessage(self.MSG_QUIT, self._screen, cond,
+        self._quit_msg = StaticMessage(self.MSG_QUIT, self._screen, condition,
             None, True, pg.font.Font(None, font_size), Align.CENTER,
             self._message_text_color, self._message_background_color, frame_width,
             self._message_frame_color, self._message_alpha,
             frame_vert_indent, frame_hor_indent)
-        self._game_over_msg = Message(self.MSG_HAS_WON, self._screen, cond,
+        self._game_over_msg = Message(self.MSG_HAS_WON, self._screen, condition,
             None, True, pg.font.Font(None, font_size), Align.CENTER,
             self._message_text_color, self._message_background_color, frame_width,
             self._message_frame_color, self._message_alpha,
             frame_vert_indent, frame_hor_indent)
-        self._info_msg = StaticMessage(self.MSG_INFO, self._screen, cond,
+        self._info_msg = StaticMessage(self.MSG_INFO, self._screen, condition,
             None, True, pg.font.Font(None, font_size), Align.LEFT,
             self._message_text_color, self._message_background_color, frame_width,
             self._message_frame_color, self._message_alpha,
@@ -497,7 +503,7 @@ class LightsGame:
         self._background = self._background.convert()  # Is it useful?
 
     def _set_icon(self) -> None:
-        if self._icons != None and self._current_icon_state != self._engine.is_net_united:
+        if self._icons is not None and self._current_icon_state != self._engine.is_net_united:
             self._current_icon_state = not self._current_icon_state
             pg.display.set_icon(self._icons[self._current_icon_state])
 
@@ -564,7 +570,7 @@ class LightsGame:
 
     def _do_command(self, input: UserInput, *args) -> None:
         command = self._commands.get(input)
-        if command != None:
+        if command is not None:
             command(*args)
 
     def _get_game_over_msg(self) -> tuple[str]:
@@ -598,7 +604,7 @@ class LightsGame:
         # Draw house
         elif cell.fork.count == 1:
             self._screen.blit(self._sprites.houses[cell.is_plugged], pos)
-        # Draw cursor ..
+        # Draw cursor .. (move it here? Now it is in _update_screen())
 
     def _draw_net(self):
         self._engine.field.for_each_index(lambda x, y: self._draw_cell(x, y))
@@ -643,7 +649,7 @@ class LightsGame:
 
 
 def fill_surface(source: pg.surface.Surface,
-    background: pg.surface.Surface) -> None:
+                 background: pg.surface.Surface) -> None:
     bg_width, bg_height = background.get_size()
     width = ceil(source.get_width() / bg_width)
     height = ceil(source.get_height() / bg_height)

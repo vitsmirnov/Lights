@@ -178,7 +178,7 @@ class Net:
         self.setup(width, height, cell)
 
     def setup(self, width: int, height: int, cell: Cell=Cell()) -> bool:
-        """ It returns True if size was changed nad False otherwise """
+        """ It returns True if size was changed and False otherwise """
         # Cell() as a default parameter is safe here, because it's copied (deep)
         width, height = self._fitted_size((width, height))
         if self.width == width and self.height == height:
@@ -281,10 +281,10 @@ class Net:
             so it returns Cell(x, y). Note, that it DOESN'T do range checks! """
         return self._cells[x][y]
 
-    def get_at(self, pos: Point) -> Cell:
+    def get_at(self, pos: Point) -> Cell | None:
         if self.does_pos_exist(pos):
             return self._cells[pos.x][pos.y]
-        #raise IndexError()
+        return None # raise IndexError()?
 
     def set_at(self, pos: Point, cell: Cell) -> None:
         if self.does_pos_exist(pos):
